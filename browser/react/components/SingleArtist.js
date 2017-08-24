@@ -16,6 +16,15 @@ class SingleArtist extends React.Component {
 
   componentDidMount () {
     const artistId = this.props.match.params.artistId;
+    this.getArtist(artistId);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const artistId = nextProps.match.params.artistId;
+    this.getArtist(artistId);
+  }
+
+  getArtist (artistId) {
     const mainPath = `/api/artists/${artistId}`;
     const paths = [mainPath, `${mainPath}/albums`, `${mainPath}/songs`];
     Bluebird

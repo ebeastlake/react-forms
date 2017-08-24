@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Songs from './Songs'
+import AddSongForm from './AddSongForm';
 
 export default class Playlist extends Component {
     constructor(props) {
@@ -9,6 +10,8 @@ export default class Playlist extends Component {
         this.state = {
             currentPlaylist: {}
         }
+
+        this.addSong = this.addSong.bind(this);
     }
 
     fetchInfo(id) {
@@ -31,7 +34,17 @@ export default class Playlist extends Component {
         }
     }
 
-
+    addSong(songId) {
+        const playlistId = this.state.currentPlaylist.id;
+        axios.post(`/api/playlists/${playlistId}/songs`, {id: songId})
+            .then((res) => {
+                console.log("IN ADD SONG!!", res.data)
+                let copy = Object.assign({}, this.state.currentPlaylist);
+                copy.songs.push(res.data);
+                this.setState({currentPlaylist: copy});
+            })
+            .catch(console.log)
+    }
 
     render() {
         const playlist = this.state.currentPlaylist
@@ -41,6 +54,7 @@ export default class Playlist extends Component {
                 <Songs songs={playlist.songs} /> {/** Hooray for reusability! */}
                 {playlist.songs && !playlist.songs.length && <small>No songs.</small>}
                 <hr />
+                <AddSongForm addSong={this.addSong}/>
             </div>
         )
     }
